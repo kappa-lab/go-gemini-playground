@@ -68,3 +68,62 @@ func Test_GenTextStream(t *testing.T) {
 		fmt.Print(result.Candidates[0].Content.Parts[0].Text)
 	}
 }
+
+func Test_Chat(t *testing.T) {
+	ctx := context.Background()
+	client := genClient(t)
+
+	contents := []*genai.Content{
+		{
+			Parts: []*genai.Part{
+				{
+					Text: "まいど。おおきに。なんでも質問したってや。",
+				},
+			},
+			Role: "model",
+		},
+		{
+			Parts: []*genai.Part{
+				{
+					Text: "1年は何日？",
+				},
+			},
+			Role: "user",
+		},
+	}
+	result, err := client.Models.GenerateContent(ctx, "gemini-2.0-flash-exp", contents, nil)
+	require.NoError(t, err)
+
+	text, err := result.Text()
+	require.NoError(t, err)
+
+	fmt.Println(text)
+
+	contents = append(contents,
+		&genai.Content{
+			Parts: []*genai.Part{
+				{
+					Text: text,
+				},
+			},
+			Role: "model",
+		},
+		&genai.Content{
+			Parts: []*genai.Part{
+				{
+					Text: "なんで例外があるの？",
+				},
+			},
+			Role: "user",
+		},
+	)
+
+	result, err = client.Models.GenerateContent(ctx, "gemini-2.0-flash-exp", contents, nil)
+	require.NoError(t, err)
+
+	text, err = result.Text()
+	require.NoError(t, err)
+
+	fmt.Println(text)
+
+}
