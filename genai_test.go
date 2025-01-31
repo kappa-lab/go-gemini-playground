@@ -127,3 +127,25 @@ func Test_Chat(t *testing.T) {
 	fmt.Println(text)
 
 }
+
+func Test_Instruction(t *testing.T) {
+	ctx := context.Background()
+	client := genClient(t)
+
+	result, err := client.Models.GenerateContent(ctx, "gemini-2.0-flash-exp", genai.Text("1年は何日？"),
+		&genai.GenerateContentConfig{
+			SystemInstruction: &genai.Content{
+				Parts: []*genai.Part{
+					{
+						Text: "京都弁で返答してください",
+					},
+				},
+			},
+		})
+	require.NoError(t, err)
+
+	text, err := result.Text()
+	require.NoError(t, err)
+
+	fmt.Println(text)
+}

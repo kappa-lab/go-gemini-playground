@@ -123,3 +123,18 @@ func Test_Chat_generative_ai_go(t *testing.T) {
 		fmt.Println(v)
 	}
 }
+
+func Test_Instruction_generative_ai_go(t *testing.T) {
+	// see https://ai.google.dev/gemini-api/docs/text-generation?hl=ja&lang=go#system-instructions
+	ctx := context.Background()
+	client := genClient_generative_ai_go(t)
+
+	model := client.GenerativeModel("gemini-2.0-flash-exp")
+	model.SystemInstruction = &genai.Content{
+		Parts: []genai.Part{genai.Text("京都弁で返答してください")},
+	}
+	resp, err := model.GenerateContent(ctx, genai.Text("1年は何日？"))
+	require.NoError(t, err)
+
+	printResponse(resp)
+}
